@@ -7,21 +7,33 @@ export default function Home() {
   const [foodCat, setFoodCat] = useState([])
   const [foodItems, setFoodItems] = useState([])
   const [search, setSearch] = useState('')
+  
   const loadFoodItems = async () => {
-    let response = await fetch("http://localhost:5000/api/auth/foodData", {
-      // credentials: 'include',
-      // Origin:"http://localhost:3000/login",
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/foodData", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        // Assuming you need to send some data in the request body, adjust this part accordingly
+        body: JSON.stringify({
+          // Add any data you need to send in the request body
+          // For example: { key1: 'value1', key2: 'value2' }
+        })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-
-    });
-    response = await response.json()
-    // console.log(response[1][0].CategoryName)
-    setFoodItems(response[0])
-    setFoodCat(response[1])
-  }
+  
+      const responseData = await response.json();
+      setFoodItems(responseData[0]);
+      setFoodCat(responseData[1]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error state or logging as needed
+    }
+  };
 
   useEffect(() => {
     loadFoodItems()
